@@ -1,0 +1,101 @@
+stages:
+  - module-pipelines
+  - test
+
+
+     
+frontend:
+  stage: module-pipelines
+  trigger:
+    include:
+      - "/frontend/.gitlab-ci.yml"
+    strategy: depend #depend нужен, если какой-нибудь дочерний пайплайн свалился, мы знали, что общий пайплайн тоже идёт с ошибкой
+  only:
+    changes: #как только происходит изменение в папке frontend, запускается дочерний пайплайн, который лежит в этой папке      - frontend/*
+      - frontend/**/*
+
+backend:
+  stage: module-pipelines
+  trigger:
+    include:
+      - "/backend/.gitlab-ci.yml"
+    strategy: depend 
+  only:
+    changes:  #как только происходит изменение в папке backend, запускается дочерний пайплайн, который лежит в этой папке
+      - backend/**/*
+sast:
+  stage: test
+include:
+- template: Security/SAST.gitlab-ci.yml
+
+
+
+#variables:
+ # VERSION: 1.0.${CI_PIPELINE_ID}
+  #MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
+#
+#stages:
+#  - build
+#  - release
+#  - report
+
+
+#build-backend-code-job:
+#  stage: build  
+#  
+#  script:
+#    - cd backend
+#    - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dversion.application=${VERSION}
+
+
+#  artifacts:
+#    paths:
+#      - backend/target/sausage-store-${VERSION}.jar
+#      - ${CI_PROJECT_DIR}/.m2/
+#  cache:
+#    paths:
+#      - ${CI_PROJECT_DIR}/.m2/repository # для хранения зависимостей бэкенда
+
+#build-frontend-code-job:
+#  stage: build  
+#  
+#  script:        
+#    - cd frontend
+#    - npm install
+#    - npm run build
+#  artifacts:
+#    paths:
+#      - frontend/dist/frontend
+#  cache:
+#    paths:
+#    - .npm/ # для хранения зависимостей сборки фронтенда
+
+
+
+#upload-backend-release:
+#  stage: release
+  
+#  needs:
+#    - build-backend-code-job
+#  script:
+#    - cd backend
+#    - mvn -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -s settings.xml -Dversion.application=${VERSION} -DskipTests deploy
+
+
+#upload-frontend-release:
+#  stage: release
+#  
+#  needs:
+#    - build-frontend-code-job
+#  script:
+#    - cd frontend/dist
+#    - tar czvf sausage-store-${VERSION}.tar.gz frontend
+#    - curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}" --upload-file sausage-store-${VERSION}.tar.gz ${NEXUS_REPO_URL_FRONTEND}/sausage-store-front/sausage-store/${VERSION}/sausage-store-${VERSION}.tar.gz
+
+
+  
+#send-report: #задача настройка уведомлений
+#  stage: report #этап report
+# script: #запуск скрипта    
+#    - > #Настройка уведомлений
+#      curl -X POST -H 'Content-type: application/json' --data '{"chat_id": "-1001657575944","text":"Вышла новая версия сосичной - '"${VERSION}#"'\nСкачать Frontend можно по ссылке - <https://nexus.k8s.praktikum-services.tech/repository/sausage-store-anar-amr-frontend//sausage-store-front/#sausage-store/'"${VERSION}"'/sausage-store-'"${VERSION}"'.tar.gz\nСкачать Backend можно по ссылке - <https://nexus.k8s.praktikum-services.tech/#repository/sausage-store-anar-amr-backend2/com/yandex/practicum/devops/sausage-store/'"${VERSION}"'/sausage-store-'"${VERSION}"'.jar"}' https://#api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage

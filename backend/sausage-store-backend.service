@@ -1,0 +1,15 @@
+[Unit]
+Description=Zapusk sosiski
+#Documentation=REPORT_PATH
+
+[Service]
+Environment="LOG_PATH=/"
+Environment="REPORT_PATH=/var/www-data/htdocs/"
+Type=simple
+User=jarservice
+ExecStart=java -jar /home/jarservice/sausage-store.jar
+StandardOutput=append:/logs/out1.log
+StandardError=append:/logs/out2.log
+Restart=always
+[Install]
+WantedBy=multi-user.target
