@@ -31,6 +31,7 @@ build-backend-code-job:
    script:
      - cd backend
      - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dversion.application=${VERSION}
+     - flyway -user=std-015-31 -password=Testusr1234 -url="jdbc:postgresql://c1b-x9g34dxygn60eu1y.mdb.yandexcloud.net:6432;database=std-015-31" info
 
    rules:
       - changes:
