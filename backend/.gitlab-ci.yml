@@ -3,7 +3,8 @@ variables:
    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
    JAVA_OPTS: -XX:MaxRAMPercentage=90
 
-#before_script:
+before_script:
+   - flyway -user=std-015-31 -password=Testusr1234 -locations='filesystem:db/migration' -url="jdbc:sqlserver://rc1b-x9g34dxygn60eu1y.mdb.yandexcloud.net;database=std-015-31" -target=4  migrate 
   #устанавливаем ssh-agent для удобства аутентификации по ssh
  # - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
  # - eval $(ssh-agent -s)
