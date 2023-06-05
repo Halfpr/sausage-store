@@ -1,3 +1,4 @@
+DROP SCHEMA public;
 CREATE SCHEMA dw;
 CREATE TABLE dw.user (
     id int PRIMARY KEY,
