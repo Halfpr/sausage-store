@@ -29,7 +29,6 @@ build-backend-code-job:
    stage: build  
   
    script:
-     - mvn flyway:repair
      - cd backend
      - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dversion.application=${VERSION}
 
