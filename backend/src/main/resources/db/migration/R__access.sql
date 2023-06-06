@@ -1,8 +1,8 @@
-CREATE SCHEMA dw;
-CREATE TABLE dw.user (
-    id int PRIMARY KEY,
-    name VARCHAR(100)
-);
+#CREATE SCHEMA dw;
+#CREATE TABLE dw.user (
+#    id int PRIMARY KEY,
+#   name VARCHAR(100)
+#);
 
 
 #GRANT SELECT ON ALL TABLES IN SCHEMA public TO read_user;
