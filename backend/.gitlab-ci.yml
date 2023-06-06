@@ -4,9 +4,6 @@ variables:
    JAVA_OPTS: -XX:MaxRAMPercentage=90
 
 #before_script:
- #  - wget -qO- https://repo1.maven.org/maven2/org/flywaydb/flyway-commandline/9.8.1/flyway-commandline-9.8.1-linux-x64.tar.gz | sudo tar xvz && sudo ln -s `pwd`/flyway-9.8.1/flyway /usr/local/bin
-
- #  - flyway -user=std-015-31 -password=Testusr1234 -locations='filesystem:backend/src/main/resources/db/migration' -url="jdbc:sqlserver://rc1b-x9g34dxygn60eu1y.mdb.yandexcloud.net;database=std-015-31" -target=4  migrate 
   #устанавливаем ssh-agent для удобства аутентификации по ssh
  # - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
  # - eval $(ssh-agent -s)
