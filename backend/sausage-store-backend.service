@@ -7,7 +7,7 @@ Environment="LOG_PATH=/"
 Environment="REPORT_PATH=/var/www-data/htdocs/"
 Type=simple
 User=jarservice
-ExecStart=java -jar /home/jarservice/sausage-store.jar
+ExecStart=/usr/bin/bash -c "java -jar /home/jarservice/sausage-store.jar --spring.datasource.url=jdbc:postgresql://$PSQL_HOST:$PSQL_PORT/$PSQL_DBNAME --spring.datasource.username=$PSQL_USER --spring.datasource.password=$PSQL_PASSWORD --spring.data.mongodb.uri=mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:27018/${MONGO_DATABASE}?tls=true"
 StandardOutput=append:/logs/out1.log
 StandardError=append:/logs/out2.log
 Restart=always
