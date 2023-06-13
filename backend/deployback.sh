@@ -7,7 +7,7 @@ sudo keytool -importcert \
              -file YandexInternalRootCA.crt \
              -alias yandex \
              -cacerts \
-             -storepass changeit \
+             -storepass ${PASSWORD} \
              -noprompt
 sudo cp -rf sausage-store-backend.service /etc/systemd/system/sausage-store-backend.service
 sudo rm -f /home/student/sausage-store.jar||true
