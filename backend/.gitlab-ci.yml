@@ -66,7 +66,7 @@ deploy:
       - ssh ${DEV_USER}@${DEV_HOST} "id"
       - scp ./backend/sausage-store-backend.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-backend.service
       - scp ./backend/deployback.sh ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/deployback.sh
-      - ssh -v ${DEV_USER}@${DEV_HOST} "export "PSQL_HOST=${PSQL_HOST}"; export "PSQL_PORT=${PSQL_PORT}"; export "PSQL_DBNAME=${PSQL_DBNAME}"; export "PSQL_USER=${PSQL_USER}"; export "MONGO_USER=${MONGO_USER}"; export "MONGO_PASSWORD=${MONGO_PASSWORD}"; export "MONGO_HOST=${MONGO_HOST}"; export "MONGO_DATABASE=${MONGO_DATABASE}"; export "CURRENT_VERSION=${VERSION}"; export "VERSION=${VERSION}"; export "DEV_HOST=${DEV_HOST}";export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; export "NEXUS_REPO_USER=${NEXUS_REPO_USER}"; export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";setsid /bin/bash  " /home/student/deployback.sh
+      - ssh -v ${DEV_USER}@${DEV_HOST} "export "PSQL_HOST=${PSQL_HOST}"; export "PSQL_PORT=${PSQL_PORT}"; export "PSQL_DBNAME=${PSQL_DBNAME}"; export "PSQL_USER=${PSQL_USER}"; export "MONGO_USER=${MONGO_USER}"; export "MONGO_PASSWORD=${MONGO_PASSWORD}"; export "MONGO_HOST=${MONGO_HOST}"; export "MONGO_DATABASE=${MONGO_DATABASE}"; export "PASSWORD=${PASSWORD}"; export "CURRENT_VERSION=${VERSION}"; export "VERSION=${VERSION}"; export "DEV_HOST=${DEV_HOST}";export "NEXUS_REPO_URL=${NEXUS_REPO_URL}"; export "NEXUS_REPO_USER=${NEXUS_REPO_USER}"; export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";setsid /bin/bash  " /home/student/deployback.sh
    environment:
       name: backend/$CI_COMMIT_REF_SLUG
       url: http://std-015-31.praktikum-services.tech/
