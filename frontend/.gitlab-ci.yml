@@ -77,6 +77,8 @@ deploy:
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
+    - ssh ${DEV_USER}@${DEV_HOST} "id"
+    - scp ./frontend/deployfront.sh ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/deployfront.sh
     - ssh ${DEV_USER}@${DEV_HOST}
       "export "VERSION=${VERSION}";
        export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
