@@ -5,6 +5,9 @@ variables:
 
 before_script:
   #устанавливаем ssh-agent для удобства аутентификации по ssh
+   - echo $CI_REGISTRY_USER
+   - echo $CI_REGISTRY_PASSWORD 
+   - echo $CI_REGISTRY
    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
    - eval $(ssh-agent -s)
   #сохраняем сгенеренный ранее приватный ключ для раннера
