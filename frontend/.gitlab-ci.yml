@@ -79,7 +79,7 @@ deploy:
   script:
     - ssh ${DEV_USER}@${DEV_HOST} "id"
     - scp ./frontend/deployfront.sh ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/deployfront.sh
-    - ssh ${DEV_USER}@${DEV_HOST}
+    - ssh - v ${DEV_USER}@${DEV_HOST}
       "export "VERSION=${VERSION}";
        export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
        export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
