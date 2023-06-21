@@ -71,13 +71,13 @@ deploy:
     - eval $(ssh-agent -s)
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    - echo "$DEPLOY_USER_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - echo "$DEPLOY_USER_SSH_PRIVATE_KEY"
-    - echo "$DEPLOY_SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - echo "$SSH_PRIVATE_KEY"
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - ssh ${DEPLOY_USER}@${DEPLOY_HOST}
+    - ssh ${DEV_USER}@${DEV_HOST}
       "export "VERSION=${VERSION}";
        export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
        export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
