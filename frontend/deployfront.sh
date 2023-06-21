@@ -1,17 +1,20 @@
-#! /bin/bash
-#Если свалится одна из команд, рухнет и весь скрипт
-set -xe
-#Перезаливаем дескриптор сервиса на ВМ для деплоя
-sudo cp -rf frontend.service /etc/systemd/system/frontend.service
-sudo rm -f /home/student/sausage-frontend.tar.gz||true
-#Переносим артефакт в нужную папку
-curl -u ${NEXUS_REPO_USER}:${NEXUS_REPO_PASS} -o sausage-store.tar.gz ${NEXUS_REPO_URL_FRONTEND}/sausage-store-front/sausage-store/"${VERSION}"/sausage-store-"${VERSION}".tar.gz
-sudo systemctl stop frontend.service||true
-sudo mkdir extract
-sudo tar -xzvf sausage-store.tar.gz -C extract/
-sudo cp -rf extract/frontend/* /var/www-data/||true
-sudo rm -rf extract/
-#Обновляем конфиг systemd с помощью рестарта
-sudo systemctl daemon-reload
-#Перезапускаем сервис фронтенд
-sudo systemctl restart frontend.service
+#!/bin/bash
+set +e
+cat > .env <<EOF
+CI_REGISTRY_USER=${CI_REGISTRY_USER}
+CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}
+CI_REGISTRY=${CI_REGISTRY}
+
+EOF
+docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+docker network create -d bridge sausage_network || true
+docker pull gitlab.praktikum-services.ru:5050/std-015-31/sausage-store-2/sausage-frontend:latest
+docker stop sausage-frontend || true
+docker rm sausage-frontend || true
+set -e
+docker run -d --name sausage-frontend \
+    --network=sausage_network \
+    --restart always \
+    --pull always \
+    --env-file .env \
+    gitlab.praktikum-services.ru:5050/std-015-31/sausage-store-2/sausage-frontend:latest
