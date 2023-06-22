@@ -13,7 +13,7 @@ docker stop sausage-frontend || true
 docker rm sausage-frontend || true
 set -e
 docker run -d --name sausage-frontend \
-    --network=sausage_network \
+    --network=sausage_network -p 8080:80 \
     --restart always \
     --pull always \
     --env-file .env \
