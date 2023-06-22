@@ -8,7 +8,7 @@ ARG VERSION=${VERSION}
 WORKDIR /usr/src/app
 COPY ./src ./src
 COPY *.xml ./
-RUN apt update && apt add bash
+RUN apt update && apt add bash -y
 # копируем CA-сертификат Яндекса в образ
 RUN curl https://storage.yandexcloud.net/cloud-certs/CA.pem -o YandexInternalRootCA.crt \
     && mvn package -Dversion.application=${VERSION}
