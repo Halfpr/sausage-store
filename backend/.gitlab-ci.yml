@@ -45,7 +45,12 @@ build-backend-code-job:
 
 sonarqube-backend-sast:
   stage: test
-  image: maven:3.8-openjdk-16
+  image: docker:20.10.12-dind-rootless
+  before_script:
+    - until docker info; do sleep 1; done
+    # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
   script:
     - cd backend  
     - mvn verify sonar:sonar 
