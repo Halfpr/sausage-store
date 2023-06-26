@@ -45,7 +45,7 @@ build-backend-code-job:
 
 sonarqube-backend-sast:
   stage: test
-  image: maven:3.8-openjdk-16
+  image: docker:20.10.12-dind-rootless
   script:
     - cd backend  
     - mvn verify sonar:sonar 
