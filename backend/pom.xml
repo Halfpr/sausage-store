@@ -17,12 +17,19 @@
         <java.version>16</java.version>
         <sonar.projectKey>test_manual</sonar.projectKey>
         <sonar.qualitygate.wait>true</sonar.qualitygate.wait>
-        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
-        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
-        <sonar.language>java</sonar.language>
-        <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+        <spring-cloud.version>2021.0.0</spring-cloud.version>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
 
        <dependency>
@@ -104,6 +111,10 @@
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
             <version>8.0.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-vault-config</artifactId>
         </dependency>
 
     </dependencies>
