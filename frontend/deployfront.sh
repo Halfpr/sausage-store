@@ -13,8 +13,9 @@ docker stop sausage-frontend || true
 docker rm sausage-frontend || true
 set -e
 docker run -d --name sausage-frontend \
-    --network=sausage_network -p 8080:80 \
+    --network=sausage_network  \
     --restart always \
     --pull always \
     --env-file .env \
+    -p 8080:80 \
     gitlab.praktikum-services.ru:5050/std-015-31/sausage-store/sausage-frontend:latest
