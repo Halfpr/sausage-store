@@ -11,6 +11,7 @@ COPY *.xml ./
 # копируем CA-сертификат Яндекса в образ
 RUN curl https://storage.yandexcloud.net/cloud-certs/CA.pem -o YandexInternalRootCA.crt \
     && mvn package -Dversion.application=${VERSION}
+
 # release
 FROM openjdk:16-jdk-alpine
 ARG VERSION=${VERSION}
@@ -29,4 +30,4 @@ COPY --chown=jaruser:jaruser \
 EXPOSE 8080
 # приложение будет запускаться под пользователем jaruser
 USER jaruser
-ENTRYPOINT ["dumb-init", "java", "-jar", "-Dmyserver.bindPort=8080", "./sausage-store.jar"] 
+ENTRYPOINT ["java", "-jar", "-Dmyserver.bindPort=8080", "./sausage-store.jar"] 

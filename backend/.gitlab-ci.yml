@@ -46,6 +46,7 @@ build-backend-code-job:
 sonarqube-backend-sast:
   stage: test
   image: maven:3.8-openjdk-16
+
   script:
     - cd backend  
     - mvn verify sonar:sonar 
@@ -73,7 +74,7 @@ release:
   
 deploy:
   stage: deploy
-  image: alpine:3.15.0
+  image: vault:1.11.3
   # если хотим сделать деплой по кнопке
 #   rules:
 #     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
@@ -92,13 +93,14 @@ deploy:
     - chmod 644 ~/.ssh/known_hosts
   script:
     - ssh ${DEV_USER}@${DEV_HOST} "id"
+    - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=sausage-store jwt=$CI_JOB_JWT)"
   #  - scp ./backend/sausage-store-backend.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-backend.service
     - scp ./backend/deployback.sh ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/deployback.sh
     - ssh -v ${DEV_USER}@${DEV_HOST} "export "VERSION=${VERSION}";
        export "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}";
-       export "SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}";
-       export "SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}";
-       export "SPRING_DATA_MONGODB_URI=${SPRING_DATA_MONGODB_URI}";
+       export "SPRING_DATASOURCE_USERNAME=$(vault kv get -field=spring.datasource.username secret/sausage-store)";
+       export "SPRING_DATASOURCE_PASSWORD=$(vault kv get -field=spring.datasource.password secret/sausage-store)";
+       export "SPRING_DATA_MONGODB_URI=$(vault kv get -field=spring.datasource.mongo secret/sausage-store)";
        export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
        export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
        export "CI_REGISTRY=${CI_REGISTRY}";setsid /bin/bash  " /home/student/deployback.sh
