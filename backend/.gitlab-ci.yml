@@ -40,7 +40,7 @@ build-backend-code-job:
       docker build
       --build-arg VERSION=$VERSION
       --tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
-      --output ${CI_PROJECT_DIR}/.m2/
+      --output ${CI_PROJECT_DIR}/.m2/repository
       .
     - docker push $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
 
