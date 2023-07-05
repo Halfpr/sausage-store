@@ -27,7 +27,7 @@ stages:
 #  - report
 
 
-build-backend-report-code-job:
+build-backend-code-job:
   stage: build
   image: docker:20.10.12-dind-rootless
   before_script:
@@ -39,9 +39,9 @@ build-backend-report-code-job:
     - >
       docker build
       --build-arg VERSION=$VERSION
-      --tag $CI_REGISTRY_IMAGE/sausage-backend-report:$CI_COMMIT_SHA
+      --tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
       .
-- docker push $CI_REGISTRY_IMAGE/sausage-backend-report:$CI_COMMIT_SHA
+- docker push $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
 
 sonarqube-backend-sast:
   stage: test
@@ -65,10 +65,10 @@ release:
     - until docker info; do sleep 1; done
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - docker pull $CI_REGISTRY_IMAGE/sausage-backend-report:$CI_COMMIT_SHA
+    - docker pull $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
     # если образ прошел проверки в CI (сканирование, тесты и т.д), то тегаем latest
-    - docker tag $CI_REGISTRY_IMAGE/sausage-backend-report:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-backend-report:latest
-    - docker push $CI_REGISTRY_IMAGE/sausage-backend-report:latest
+    - docker tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-backend:latest
+    - docker push $CI_REGISTRY_IMAGE/sausage-backend:latest
 
 
   
@@ -95,7 +95,7 @@ deploy:
     - ssh ${DEV_USER}@${DEV_HOST} "id"
     - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=sausage-store jwt=$CI_JOB_JWT)"
   #  - scp ./backend/sausage-store-backend.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-backend.service
-    - scp ./backend/deploybackreport.sh ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/deploybackreport.sh
+    - scp ./backend/deployback.sh ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/deployback.sh
     - ssh -v ${DEV_USER}@${DEV_HOST} "export "VERSION=${VERSION}";
        export "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}";
        export "SPRING_DATASOURCE_USERNAME=$(vault kv get -field=spring.datasource.username secret/sausage-store)";
@@ -103,4 +103,4 @@ deploy:
        export "SPRING_DATA_MONGODB_URI=$(vault kv get -field=spring.datasource.mongo secret/sausage-store)";
        export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
        export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
-       export "CI_REGISTRY=${CI_REGISTRY}";setsid /bin/bash  " /home/student/deploybackreport.sh
+       export "CI_REGISTRY=${CI_REGISTRY}";setsid /bin/bash  " /home/student/deployback.sh
