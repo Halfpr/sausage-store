@@ -21,10 +21,13 @@ variables:
 
 stages:
    - build
+   - test
+   - release
+   - deploy
 #  - report
 
 
-build-backend-code-report-job:
+build-backend-code-job:
   stage: build
   image: docker:20.10.12-dind-rootless
   before_script:
@@ -36,7 +39,68 @@ build-backend-code-report-job:
     - >
       docker build
       --build-arg VERSION=$VERSION
-      --tag $CI_REGISTRY_IMAGE/sausage-backend-report:$CI_COMMIT_SHA
+      --tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
       .
-- docker push $CI_REGISTRY_IMAGE/sausage-backend-report:$CI_COMMIT_SHA
+- docker push $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
 
+sonarqube-backend-sast:
+  stage: test
+  image: maven:3.8-openjdk-16
+
+  script:
+    - cd backend  
+    - mvn verify sonar:sonar 
+        -Dsonar.qualitygate.wait=true
+        -Dsonar.projectKey=$PROJECTKEY
+        -Dsonar.host.url=$HOST
+        -Dsonar.login=$LOGIN
+  allow_failure: true
+
+release:
+  variables:
+    GIT_STRATEGY: none
+  image: docker:20.10.12-dind-rootless
+  stage: release
+  before_script:
+    - until docker info; do sleep 1; done
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+    # если образ прошел проверки в CI (сканирование, тесты и т.д), то тегаем latest
+    - docker tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-backend:latest
+    - docker push $CI_REGISTRY_IMAGE/sausage-backend:latest
+
+
+  
+deploy:
+  stage: deploy
+  image: vault:1.11.3
+  # если хотим сделать деплой по кнопке
+#   rules:
+#     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+#       when: manual
+#     - if: '$CI_COMMIT_BRANCH == "master"'
+#       when: manual
+  before_script:
+    - apk add openssh-client bash
+    - eval $(ssh-agent -s)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - echo "$SSH_PRIVATE_KEY"
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - ssh ${DEV_USER}@${DEV_HOST} "id"
+    - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=sausage-store jwt=$CI_JOB_JWT)"
+  #  - scp ./backend/sausage-store-backend.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-backend.service
+    - scp ./backend/deployback.sh ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/deployback.sh
+    - ssh -v ${DEV_USER}@${DEV_HOST} "export "VERSION=${VERSION}";
+       export "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}";
+       export "SPRING_DATASOURCE_USERNAME=$(vault kv get -field=spring.datasource.username secret/sausage-store)";
+       export "SPRING_DATASOURCE_PASSWORD=$(vault kv get -field=spring.datasource.password secret/sausage-store)";
+       export "SPRING_DATA_MONGODB_URI=$(vault kv get -field=spring.datasource.mongo secret/sausage-store)";
+       export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
+       export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
+       export "CI_REGISTRY=${CI_REGISTRY}";setsid /bin/bash  " /home/student/deployback.sh
