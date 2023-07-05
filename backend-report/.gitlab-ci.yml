@@ -27,7 +27,7 @@ stages:
 #  - report
 
 
-build-backend-code-job:
+build-backend-code-report-job:
   stage: build
   image: docker:20.10.12-dind-rootless
   before_script:
