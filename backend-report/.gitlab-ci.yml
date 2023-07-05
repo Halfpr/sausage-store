@@ -41,7 +41,7 @@ build-backend-code-job:
       --build-arg VERSION=$VERSION
       --tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
       .
-- docker push $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+      - docker push $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
 
 sonarqube-backend-sast:
   stage: test
@@ -104,3 +104,4 @@ deploy:
        export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
        export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
        export "CI_REGISTRY=${CI_REGISTRY}";setsid /bin/bash  " /home/student/deployback.sh
+
