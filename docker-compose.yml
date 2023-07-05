@@ -15,7 +15,6 @@ services:
     container_name: sausage-backend-report
     environment:
       SPRING_DATA_MONGODB_URI: mongodb://std-015-31:Testusr1234@rc1c-wqwzfolame1vyonu.mdb.yandexcloud.net:27018/std-015-31?tls=true
-      DB: mongodb://std-015-31:Testusr1234@rc1c-wqwzfolame1vyonu.mdb.yandexcloud.net:27018/std-015-31?tls=true
     networks:
       - sausage_network
   frontend:
