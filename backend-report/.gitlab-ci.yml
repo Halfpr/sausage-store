@@ -33,7 +33,7 @@ build-backend-report:
    script:
      - cd backend-report
      - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dversion.application=${VERSION}
-     - cd backend-report/target
+     - cd target
      - ls 
 
    rules:
