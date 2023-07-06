@@ -33,15 +33,13 @@ build-backend-report:
    script:
      - cd backend-report
      - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dversion.application=${VERSION}
-     - cd target
-     - ls 
 
    rules:
       - changes:
            - backend-report/**/*
    artifacts:
      paths:
-       - backend-report/target/sausage-store-report-${VERSION}.jar
+       - backend-report/target/sausage-store-report-1.0.0.jar
        - ${CI_PROJECT_DIR}/.m2/
 
 build-backend-report-docker:
@@ -54,7 +52,7 @@ build-backend-report-docker:
     # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - cp backend-report/target/sausage-store-report-${VERSION}.jar backend-report/
+    - cp backend-report/target/sausage-store-report-1.0.0.jar backend-report/
     - cd backend-report
     - >
       docker build
