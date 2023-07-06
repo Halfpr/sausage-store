@@ -1,6 +1,7 @@
 version: "3.3"
 services:
   backend:
+    restart: always
     image: gitlab.praktikum-services.ru:5050/std-015-31/sausage-store/sausage-backend:latest
     container_name: sausage-backend
     networks:
@@ -11,6 +12,7 @@ services:
       spring.cloud.vault.enabled: "false"
       SPRING_FLYWAY_BASELINE-ON-MIGRATE: "true" 
   backend-report:
+    restart: always
     image: gitlab.praktikum-services.ru:5050/std-015-31/sausage-store/sausage-backend-report:latest
     container_name: sausage-backend-report
     env_file: 
@@ -21,6 +23,7 @@ services:
     networks:
       - sausage_network
   frontend:
+    restart: always
     image: gitlab.praktikum-services.ru:5050/std-015-31/sausage-store/sausage-frontend:latest
     container_name: sausage-frontend
     ports:
