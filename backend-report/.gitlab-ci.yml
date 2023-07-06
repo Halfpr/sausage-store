@@ -26,8 +26,22 @@ stages:
    - deploy
 #  - report
 
+build-backend-report:
+   stage: build  
+  
+   script:
+     - cd backend-report
+     - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dversion.application=${VERSION}
 
-build-backend-code-job:
+   rules:
+      - changes:
+           - backend-report/**/*
+   artifacts:
+     paths:
+       - backend-report/target/sausage-store-report-${VERSION}.jar
+       - ${CI_PROJECT_DIR}/.m2/
+
+build-backend-report-docker:
   stage: build
   image: docker:20.10.12-dind-rootless
   before_script:
@@ -35,6 +49,7 @@ build-backend-code-job:
     # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
+    - cp backend-report/target/sausage-store-report-${VERSION}.jar backend-report/
     - cd backend-report
     - >
       docker build
