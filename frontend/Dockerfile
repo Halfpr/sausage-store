@@ -1,7 +1,8 @@
 FROM node:16.17-alpine 
 WORKDIR /usr/src/app 
 COPY . . 
-RUN npm install -g npm@9.8.0
+RUN apt update
+RUN npm install -g npm@9.8.0 -y
 RUN npm install -g http-server
 RUN npm run build 
 EXPOSE 80 
