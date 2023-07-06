@@ -5,9 +5,9 @@ services:
     container_name: sausage-backend
     environment:
       spring.cloud.vault.enabled: "false"
-      SPRING_DATASOURCE_USERNAME: std-015-31
-      SPRING_DATASOURCE_PASSWORD: Testusr1234
-      SPRING_DATASOURCE_URL: jdbc:postgresql://rc1b-x9g34dxygn60eu1y.mdb.yandexcloud.net:6432/std-015-31
+      SPRING_DATASOURCE_USERNAME: $(vault kv get -field=spring.datasource.username secret/sausage-store)
+      SPRING_DATASOURCE_PASSWORD: $(vault kv get -field=spring.datasource.password secret/sausage-store)
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
  #     SPRING_DATA_MONGODB_URI: mongodb://std-015-31:Testusr1234@rc1c-wqwzfolame1vyonu.mdb.yandexcloud.net:27018/std-015-31?tls=true
       SPRING_FLYWAY_BASELINE-ON-MIGRATE: "true"
     networks:
@@ -17,7 +17,7 @@ services:
     container_name: sausage-backend-report
     environment:
       spring.cloud.vault.enabled: "false"
-      DB: mongodb://std-015-31:Testusr1234@rc1c-wqwzfolame1vyonu.mdb.yandexcloud.net:27018/std-015-31?tls=true
+      DB: $(vault kv get -field=spring.datasource.mongo secret/sausage-store)
       PORT: 8080
     ports:
       - "8080:8080"
