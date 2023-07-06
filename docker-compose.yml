@@ -18,6 +18,7 @@ services:
     environment:
       spring.cloud.vault.enabled: "false"
       DB: mongodb://std-015-31:Testusr1234@rc1c-wqwzfolame1vyonu.mdb.yandexcloud.net:27018/std-015-31?tls=true
+      PORT: 8080
     ports:
       - "8080:8080"
     networks:
