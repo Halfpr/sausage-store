@@ -20,14 +20,15 @@ variables:
 #   - chmod 644 ~/.ssh/known_hosts
 
 stages:
-   - build
+   - build-code
+   - build-docker
    - test
    - release
    - deploy
 #  - report
 
 build-backend-report:
-   stage: build  
+   stage: build-code
   
    script:
      - cd backend-report
@@ -44,7 +45,7 @@ build-backend-report:
 build-backend-report-docker:
   dependencies:
     - build-backend-report
-  stage: build
+  stage: build-docker
   image: docker:20.10.12-dind-rootless
   before_script:
     - until docker info; do sleep 1; done
