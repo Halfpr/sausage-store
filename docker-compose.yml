@@ -17,7 +17,7 @@ services:
       - .env
     environment:
       spring.cloud.vault.enabled: "false"
-      PORT: 8082
+      PORT: 8081
     networks:
       - sausage_network
   frontend:
