@@ -32,6 +32,9 @@ build-backend-report:
    script:
      - cd backend-report
      - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dversion.application=${VERSION}
+     - cd ..
+     - mkdir backend-report-${VERSION}  # создание директории, в которую копируются артефакты. Это нужно для организации удобной структуры архива
+     - mv backend-report/target/sausage-store-report-${VERSION}.jar backend-report-${VERSION}/backend-report-${VERSION}.jar # копирование 
 
    rules:
       - changes:
@@ -49,7 +52,7 @@ build-backend-report-docker:
     # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - cp backend-report/target/sausage-store-report-${VERSION}.jar backend-report/
+    - cp backend-report-${VERSION}/backend-report-${VERSION}.jar backend-report/
     - cd backend-report
     - >
       docker build
