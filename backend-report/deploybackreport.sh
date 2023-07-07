@@ -22,4 +22,4 @@ docker-compose up -d backend-report
 #     --restart always \
 #     --pull always \
 #     --env-file .env \
-#     gitlab.praktikum-services.ru:5050/dmitriy-krylov/new_project/sausage-backend-report:latest
+#     gitlab.praktikum-services.ru:5050/std-015-31/sausage-store/sausage-backend-report:latest
