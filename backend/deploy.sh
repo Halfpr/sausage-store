@@ -1,13 +1,19 @@
 #! /bin/bash
-#Если свалится одна из команд, рухнет и весь скрипт
-set -xe
-#Перезаливаем дескриптор сервиса на ВМ для деплоя
-sudo cp -rf sausage-store-backend.service /etc/systemd/system/sausage-store-backend.service
-sudo rm -f /home/jarservice/sausage-store.jar||true
-#Переносим артефакт в нужную папку
-curl -u ${NEXUS_REPO_USER}:${NEXUS_REPO_PASS} -o sausage-store.jar ${NEXUS_REPO_URL}com/yandex/practicum/devops/sausage-store/${VERSION}/sausage-store-${VERSION}.jar
-sudo cp ./sausage-store.jar /home/jarservice/sausage-store.jar||true #"<...>||true" говорит, если команда обвалится — продолжай
-#Обновляем конфиг systemd с помощью рестарта
-sudo systemctl daemon-reload
-#Перезапускаем сервис сосисочной
-sudo systemctl restart sausage-store-backend
+docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+docker network create -d bridge sausage_network || true
+docker pull gitlab.praktikum-services.ru:5050/std-015-31/sausage-store/sausage-backend:latest
+docker rm -f sausage-backend || true
+#docker stop sausage-backend || true && docker rm sausage-backend || true
+docker-compose pull sausage-backend
+docker-compose up -d backend
+
+docker pull gitlab.praktikum-services.ru:5050/std-015-31/sausage-store/sausage-frontend:latest
+docker rm -f sausage-frontend || true
+docker-compose pull sausage-frontend
+docker-compose up -d frontend
+
+docker pull gitlab.praktikum-services.ru:5050/std-015-31/sausage-store/sausage-backend-report:latest
+docker rm -f sausage-backend-report || true
+docker-compose pull sausage-backend-report
+docker-compose up -d backend-report
+
