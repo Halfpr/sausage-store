@@ -7,7 +7,7 @@ if [[ $(docker inspect -f '{{.State.Running}}' backend-blue) = true ]]; then
   docker rm backend-green || true
   docker-compose pull backend-green || true
   docker-compose up -d backend-green || true
-  while [[ $(docker inspect -f '{{.State.Health.Status}}' backend-green) != "unhealthy" ]]; do
+  while [[ $(docker inspect -f '{{.State.Health.Status}}' backend-green) != "healthy" ]]; do
     echo "bayubay"
     sleep 10
   done
@@ -19,7 +19,7 @@ elif [[ $(docker inspect -f '{{.State.Running}}' backend-green) = true ]]; then
   docker rm backend-blue || true
   docker-compose pull backend-blue || true
   docker-compose up -d backend-blue || true
-  while [[ $(docker inspect -f '{{.State.Health.Status}}' backend-blue) != "unhealthy" ]]; do
+  while [[ $(docker inspect -f '{{.State.Health.Status}}' backend-blue) != "healthy" ]]; do
     echo "bayubay"
     sleep 10
   done
