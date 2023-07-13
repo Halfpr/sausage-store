@@ -39,7 +39,8 @@
 #docker-compose pull sausage-frontend
 #docker-compose up -d frontend
 
-
+docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+docker network create -d bridge sausage_network || true
 docker pull gitlab.praktikum-services.ru:5050/std-015-31/sausage-store/sausage-backend:latest
 docker rm -f backend-blue || true
 docker stop sausage-backend || true && docker rm sausage-backend || true
