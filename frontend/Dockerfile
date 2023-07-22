@@ -7,7 +7,7 @@ RUN npm run build
 
 FROM nginxproxy/nginx-proxy
 COPY --from=frontend /usr/src/app/dist/frontend /usr/share/nginx/html
-COPY ./nginx.tmpl /app/nginx.tmpl
+#COPY ./nginx.tmpl /app/nginx.tmpl
 WORKDIR /app
 
 
