@@ -5,7 +5,7 @@ RUN npm install
 RUN npm install -g http-server
 RUN npm run build 
 
-FROM nginxproxy/nginx-proxy
+FROM nginx:latest
 COPY --from=frontend /usr/src/app/dist/frontend /usr/share/nginx/html
 #COPY ./nginx.tmpl /app/nginx.tmpl
 WORKDIR /usr/share/nginx/html
