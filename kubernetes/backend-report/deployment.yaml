@@ -18,21 +18,8 @@ spec:
           name: backend-report
           imagePullPolicy: IfNotPresent
           env:
-            - name: SPRING_DATASOURCE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: postgresmongo
-                  key: postgres_host
-            - name: SPRING_DATASOURCE_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: postgresmongo
-                  key: postgres_user
-            - name: SPRING_DATASOURCE_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: postgresmongo
-                  key: postgres_password
+            - name: PORT
+              value:  "8080"      
             - name: SPRING_DATA_MONGODB_URI
               valueFrom:
                 secretKeyRef:
@@ -47,8 +34,6 @@ spec:
               value: "false"
             - name: spring.cloud.vault.enabled
               value: "false"
-            - name: REPORT_PATH
-              value: /log/reports
             - name: SPRING_FLYWAY_BASELINE-ON-MIGRATE
               value: "true"
           ports:
