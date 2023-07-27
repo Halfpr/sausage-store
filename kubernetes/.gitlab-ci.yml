@@ -8,7 +8,7 @@ deploy:
     name: dev
     url: https://15-anar-amrakhov.k8s.praktikum-services.tech
   before_script: 
-    - mkdir ~/.kube/config
+    - mkdir ~/.kube
     - echo -n $KUBE_CONFIG | base64 -d > ~/.kube/config
   script:
     - cd kubernetes
