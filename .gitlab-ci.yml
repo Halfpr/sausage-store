@@ -42,42 +42,50 @@ include:
 
     
 deploy:
-  stage: deploy
-  needs:
-    - frontend
-    - backend
-    - backend-report
-  image: vault:1.11.3
+  stage: module-pipelines
+  trigger: 
+    include: 
+      - "/kubernetes/.gitlab-ci.yml"
+    strategy: depend 
+  only:
+    changes: 
+      - kubernetes/**/*
+
+#  needs:
+#    - frontend
+##    - backend
+#    - backend-report
+#  image: vault:1.11.3
   # если хотим сделать деплой по кнопке
 #   rules:
 #     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
 #       when: manual
 #     - if: '$CI_COMMIT_BRANCH == "master"'
 #       when: manual
-  before_script:
-    - apk add openssh-client bash
-    - eval $(ssh-agent -s)
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - echo "$SSH_PRIVATE_KEY"
-    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-  script:
-    - ssh ${DEV_USER}@${DEV_HOST} "id"
-    - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=sausage-store jwt=$CI_JOB_JWT)"
+#  before_script:
+#    - apk add openssh-client bash
+#    - eval $(ssh-agent -s)
+#    - mkdir -p ~/.ssh
+#    - chmod 700 ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+#    - chmod 600 ~/.ssh/id_rsa
+#    - echo "$SSH_PRIVATE_KEY"
+#    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+#    - chmod 644 ~/.ssh/known_hosts
+#  script:
+#    - ssh ${DEV_USER}@${DEV_HOST} "id"
+#    - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=sausage-store jwt=$CI_JOB_JWT)"
   #  - scp ./backend/sausage-store-backend.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-backend.service
-    - scp ./backend/deploy.sh ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/deploy.sh
-    - scp ./docker-compose.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/
-    - ssh -v ${DEV_USER}@${DEV_HOST} "export "VERSION=${VERSION}";
-       export "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}";
-       export "SPRING_DATASOURCE_USERNAME=$(vault kv get -field=spring.datasource.username secret/sausage-store)";
-       export "SPRING_DATASOURCE_PASSWORD=$(vault kv get -field=spring.datasource.password secret/sausage-store)";
-       export "SPRING_DATA_MONGODB_URI=$(vault kv get -field=spring.datasource.mongo secret/sausage-store)";
-       export "DB=${SPRING_DATA_MONGODB_URI}";
-       export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
-       export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
-       export "CI_REGISTRY=${CI_REGISTRY}";setsid /bin/bash  " /home/student/deploy.sh
+#    - scp ./backend/deploy.sh ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/deploy.sh
+#    - scp ./docker-compose.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/
+#    - ssh -v ${DEV_USER}@${DEV_HOST} "export "VERSION=${VERSION}";
+#       export "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}";
+#       export "SPRING_DATASOURCE_USERNAME=$(vault kv get -field=spring.datasource.username secret/sausage-store)";
+#       export "SPRING_DATASOURCE_PASSWORD=$(vault kv get -field=spring.datasource.password secret/sausage-store)";
+#       export "SPRING_DATA_MONGODB_URI=$(vault kv get -field=spring.datasource.mongo secret/sausage-store)";
+#       export "DB=${SPRING_DATA_MONGODB_URI}";
+#       export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
+#       export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
+#       export "CI_REGISTRY=${CI_REGISTRY}";setsid /bin/bash  " /home/student/deploy.sh
 
 
