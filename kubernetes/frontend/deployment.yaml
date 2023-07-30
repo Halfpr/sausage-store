@@ -4,6 +4,7 @@ kind: Deployment
 metadata:
   name: frontend
 spec:
+  revisionHistoryLimit: 15
   replicas: 1
   selector:
     matchLabels:
@@ -13,6 +14,15 @@ spec:
       labels:
         app: frontend
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - frontend
       containers:
         - image: gitlab.praktikum-services.ru:5050/std-015-31/sausage-store/sausage-frontend:latest
           name: frontend

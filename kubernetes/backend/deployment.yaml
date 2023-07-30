@@ -4,10 +4,16 @@ kind: Deployment
 metadata:
   name: backend
 spec:
+  revisionHistoryLimit: 15
   replicas: 1
   selector:
     matchLabels:
       app: backend
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 20%
   template:
     metadata:
       labels:
