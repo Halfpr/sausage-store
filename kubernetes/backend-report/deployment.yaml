@@ -4,6 +4,7 @@ kind: Deployment
 metadata:
   name: backend-report
 spec:
+  revisionHistoryLimit: 15
   replicas: 1
   selector:
     matchLabels:
