@@ -1,0 +1,42 @@
+stages:
+  - release
+  - deploy
+
+variables:
+  VERSION: 0.1.${CI_PIPELINE_ID}
+
+upload-helm:
+  stage: release
+  image: lwolf/helm-kubectl-docker:v1.21.1-v3.6.0
+  before_script:
+    - mkdir -p ~/.kube
+    - echo -n $KUBE_CONFIG | base64 -d > ~/.kube/config
+    - apk --no-cache add curl
+  script:
+    - cd sausage-store-chart
+    - helm package --version $VERSION ./
+    - curl -u "${NEXUS_REPO_USER}:$(echo $NEXUS_REPO_PASS | base64 -d)" ${NEXUS_HELM_REPO} --upload-file sausage-store-${VERSION}.tgz
+
+  after_script:
+    - rm ~/.kube/config
+
+deploy-helm:
+  stage: deploy
+  image: lwolf/helm-kubectl-docker:v1.21.1-v3.6.0
+  when: manual
+  environment:
+    name: dev-helm
+    url: https://15-anar-amrakhov.k8s.praktikum-services.tech
+  before_script:
+    - mkdir -p ~/.kube
+    - echo -n $KUBE_CONFIG | base64 -d > ~/.kube/config
+  script:
+    - helm repo add nexus $NEXUS_HELM_REPO --username ${NEXUS_REPO_USER} --password $(echo $NEXUS_REPO_PASS | base64 -d)
+    - helm repo update
+    - >
+      helm upgrade --install sausage-store \
+        --set environment=test \
+        --atomic --timeout 15m \
+          nexus/sausage-store
+  after_script:
+    - rm ~/.kube/config

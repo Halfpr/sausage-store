@@ -1,9 +1,9 @@
 secrets:
-  postgresHost: "jdbc:postgresql://rc1b-x9g34dxygn60eu1y.mdb.yandexcloud.net:6432/std-015-31"
-  postgresUser: "std-015-31"
-  postgresPassword: "Testusr1234"
-  mongoHost: "mongodb://std-015-31:Testusr1234@rc1c-wqwzfolame1vyonu.mdb.yandexcloud.net:27018/std-015-31?tls=true"
-  mongoDB: "mongodb://std-015-31:Testusr1234@rc1c-wqwzfolame1vyonu.mdb.yandexcloud.net:27018/std-015-31?tls=true"
+  postgresHost: "${SPRING_DATASOURCE_URL}"
+  postgresUser: "${SPRING_DATASOURCE_USERNAME}"
+  postgresPassword: "${SPRING_DATASOURCE_PASSWORD}"
+  mongoHost: "${SPRING_DATA_MONGODB_URI}"
+  mongoDB: "${SPRING_DATA_MONGODB_URI}"
   dockerConfigJson: "ewoJImF1dGhzIjogewoJCSJnaXRsYWIucHJha3Rpa3VtLXNlcnZpY2VzLnJ1OjUwNTAiOiB7CgkJCSJhdXRoIjogImMzUmtMVEF4TlMwek1UcFdNMFZ3TjJJeU9RPT0iCgkJfQoJfQp9"
 
 
@@ -20,7 +20,7 @@ global:
 backend:
   name: backend
   revisionHistoryLimit: 15
-  replicas: 3
+  replicas: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -61,9 +61,9 @@ backend-report:
 
 frontend:
   name: frontend
-  fqdn: "15-anar-amrakhov.k8s.praktikum-services.tech"
+  fqdn: 15-anar-amrakhov.k8s.praktikum-services.tech
   port: 8080
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: 15
   image:
     name: "sausage-frontend"
