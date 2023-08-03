@@ -1,7 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Chart.Name }}
+  name: "{{ .Chart.Name }}-{{ .Release.Name }}"
+  namespace: "{{ .Release.Namespace }}"
+  labels:
+    {{- include "sausage-store.labels" . | nindent 4 }}
 spec:
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
   replicas: {{ .Values.replicas }}
