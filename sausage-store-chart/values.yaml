@@ -1,11 +1,10 @@
 secrets:
-  postgresHost: "${SPRING_DATASOURCE_URL}"
-  postgresUser: "${SPRING_DATASOURCE_USERNAME}"
-  postgresPassword: "${SPRING_DATASOURCE_PASSWORD}"
-  mongoHost: "${SPRING_DATA_MONGODB_URI}"
-  mongoDB: "${SPRING_DATA_MONGODB_URI}"
-  dockerConfigJson: "ewoJImF1dGhzIjogewoJCSJnaXRsYWIucHJha3Rpa3VtLXNlcnZpY2VzLnJ1OjUwNTAiOiB7CgkJCSJhdXRoIjogImMzUmtMVEF4TlMwek1UcFdNMFZ3TjJJeU9RPT0iCgkJfQoJfQp9"
-
+  postgresHost: ""
+  postgresUser: ""
+  postgresPassword: ""
+  mongoHost: ""
+  mongoDB: ""
+  dockerConfigJson: ""
 
 global:
   backendPort: 8080
