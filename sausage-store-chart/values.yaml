@@ -1,9 +1,4 @@
 secrets:
-  postgresHost: ""
-  postgresUser: ""
-  postgresPassword: ""
-  mongoHost: ""
-  mongoDB: ""
   dockerConfigJson: ""
 
 global:

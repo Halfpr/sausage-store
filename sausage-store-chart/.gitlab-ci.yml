@@ -40,11 +40,16 @@ deploy-helm:
     - >
       helm upgrade --install sausage-store \
         --set environment=test \
-        --set secrets.postgresHost=${SPRING_DATASOURCE_URL}\
-        --set secrets.postgresUser=${SPRING_DATASOURCE_USERNAME} \
-        --set secrets.postgresPassword=${SPRING_DATASOURCE_PASSWORD}\
-        --set secrets.mongoHost=${SPRING_DATA_MONGODB_URI}\
-        --set secrets.mongoDB=${SPRING_DATA_MONGODB_URI}\
+        --set backend.secrets.postgresHost=${SPRING_DATASOURCE_URL}\
+        --set backend.secrets.postgresUser=${SPRING_DATASOURCE_USERNAME} \
+        --set backend.secrets.postgresPassword=${SPRING_DATASOURCE_PASSWORD}\
+        --set backend.secrets.mongoHost=${SPRING_DATA_MONGODB_URI}\
+        --set backend.secrets.mongoDB=${SPRING_DATA_MONGODB_URI}\
+        --set backend-report.secrets.postgresHost=${SPRING_DATASOURCE_URL}\
+        --set backend-report.secrets.postgresUser=${SPRING_DATASOURCE_USERNAME}\
+        --set backend-report.secrets.postgresPassword=${SPRING_DATASOURCE_PASSWORD}\
+        --set backend-report.secrets.mongoHost=${SPRING_DATA_MONGODB_URI}\
+        --set backend-report.secrets.mongoDB=${SPRING_DATA_MONGODB_URI}\
         --set secrets.dockerConfigJson=${DOCKER_CONFIG_JSON} \
         --atomic --timeout 15m \
           nexus/sausage-store
