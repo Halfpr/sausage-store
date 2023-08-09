@@ -1,0 +1,71 @@
+secrets:
+  dockerConfigJson: ""
+
+global:
+  backendPort: 8080
+  springFlywayBaseline: true
+  reportPath: /log/reports
+  springCloudVaultEnabled: false
+  springFlywayEnables: false
+  appName: sausage-store
+  environment: test
+  imageRegistry: gitlab.praktikum-services.ru:5050/std-015-31/sausage-store
+
+backend:
+  name: backend
+  revisionHistoryLimit: 15
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 20%
+  image:
+    name: "sausage-backend"
+    tag: "latest"
+  vpa:
+    updateMode: "Auto"
+    resources:
+      minAllowed:
+        cpu: 0m
+        memory: 0Mi
+      maxAllowed:
+        cpu: 1
+        memory: 500Mi
+
+backend-report:
+  name: backend-report
+  revisionHistoryLimit: 15
+  replicas: 1
+  image:
+    name: "sausage-backend-report"
+    tag: "latest"
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "300m"
+  hpa:
+    resources:
+      minReplicas: 1
+      maxReplicas: 5
+      averageUtilization: 75
+
+frontend:
+  name: frontend
+  fqdn: 15-anar-amrakhov.k8s.praktikum-services.tech
+  port: 8080
+  replicas: 1
+  revisionHistoryLimit: 15
+  image:
+    name: "sausage-frontend"
+    tag: "latest"
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "300m"

@@ -20,34 +20,52 @@ variables:
 #   - chmod 644 ~/.ssh/known_hosts
 
 stages:
-   - build
+   - build-code
+   - build-docker
    - test
    - release
 #  - report
 
+build-backend-report:
+   stage: build-code
+  
+   script:
+     - cd backend-report
+     - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dversion.application=${VERSION}
 
-build-backend-code-job:
-  stage: build
+   rules:
+      - changes:
+           - backend-report/**/*
+   artifacts:
+     paths:
+       - backend-report/target/sausage-store-report-1.0.0.jar
+       - ${CI_PROJECT_DIR}/.m2/
+
+build-backend-report-docker:
+  dependencies:
+    - build-backend-report
+  stage: build-docker
   image: docker:20.10.12-dind-rootless
   before_script:
     - until docker info; do sleep 1; done
     # переменные CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY генерятся Гитлабом, их задавать не надо
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - cd backend
+    - cp backend-report/target/sausage-store-report-1.0.0.jar backend-report/
+    - cd backend-report
     - >
       docker build
       --build-arg VERSION=$VERSION
-      --tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+      --tag $CI_REGISTRY_IMAGE/sausage-backend-report:$CI_COMMIT_SHA
       .
-    - docker push $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+    - docker push $CI_REGISTRY_IMAGE/sausage-backend-report:$CI_COMMIT_SHA
 
 sonarqube-backend-sast:
   stage: test
   image: maven:3.8-openjdk-16
 
   script:
-    - cd backend  
+    - cd backend-report  
     - mvn verify sonar:sonar 
         -Dsonar.qualitygate.wait=true
         -Dsonar.projectKey=$PROJECTKEY
@@ -64,7 +82,7 @@ release:
     - until docker info; do sleep 1; done
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
   script:
-    - docker pull $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA
+    - docker pull $CI_REGISTRY_IMAGE/sausage-backend-report:$CI_COMMIT_SHA
     # если образ прошел проверки в CI (сканирование, тесты и т.д), то тегаем latest
-    - docker tag $CI_REGISTRY_IMAGE/sausage-backend:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-backend:latest
-    - docker push $CI_REGISTRY_IMAGE/sausage-backend:latest
+    - docker tag $CI_REGISTRY_IMAGE/sausage-backend-report:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE/sausage-backend-report:latest
+    - docker push $CI_REGISTRY_IMAGE/sausage-backend-report:latest
