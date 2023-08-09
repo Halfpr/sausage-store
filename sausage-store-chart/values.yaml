@@ -14,7 +14,7 @@ global:
 backend:
   name: backend
   revisionHistoryLimit: 15
-  replicas: 2
+  replicas: 1
   strategy:
     type: RollingUpdate
     rollingUpdate:
