@@ -1,5 +1,5 @@
 secrets:
-  dockerConfigJson: "${DOCKER_CONFIG_JSON}"
+  dockerConfigJson: "ewoJImF1dGhzIjogewoJCSJnaXRsYWIucHJha3Rpa3VtLXNlcnZpY2VzLnJ1OjUwNTAiOiB7CgkJCSJhdXRoIjogImMzUmtMVEF4TlMwek1UcFdNMFZ3TjJJeU9RPT0iCgkJfQoJfQp9"
 
 global:
   backendPort: 8080
