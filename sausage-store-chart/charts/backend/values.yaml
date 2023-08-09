@@ -1,0 +1,6 @@
+secrets:
+  postgresHost: ""
+  postgresUser: ""
+  postgresPassword: ""
+  mongoHost: ""
+  mongoDB: ""

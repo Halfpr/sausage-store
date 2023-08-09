@@ -1,7 +1,7 @@
 stages:
   - module-pipelines
   - test
-
+  - deploy
 
      
 frontend:
@@ -23,79 +23,80 @@ backend:
   only:
     changes:  #как только происходит изменение в папке backend, запускается дочерний пайплайн, который лежит в этой папке
       - backend/**/*
+
+backend-report:
+  stage: module-pipelines
+  trigger:
+    include:
+      - "/backend-report/.gitlab-ci.yml"
+    strategy: depend 
+  only:
+    changes:  #как только происходит изменение в папке backend, запускается дочерний пайплайн, который лежит в этой папке
+      - backend-report/**/*
+
 sast:
   stage: test
+
 include:
 - template: Security/SAST.gitlab-ci.yml
 
 
 
-#variables:
- # VERSION: 1.0.${CI_PIPELINE_ID}
-  #MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
-#
-#stages:
-#  - build
-#  - release
-#  - report
+kubernetes:
+  stage: module-pipelines
+  trigger:
+    include:
+      - "/kubernetes/.gitlab-ci.yml"
+    strategy: depend
+  only:
+    changes:
+      - kubernetes/**/*
 
+helm:
+  stage: module-pipelines
+  trigger:
+    include:
+      - "/sausage-store-chart/.gitlab-ci.yml"
+    strategy: depend
+  only:
+    changes:
+      - sausage-store-chart/**/*      
 
-#build-backend-code-job:
-#  stage: build  
-#  
-#  script:
-#    - cd backend
-#    - mvn package -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -Dversion.application=${VERSION}
-
-
-#  artifacts:
-#    paths:
-#      - backend/target/sausage-store-${VERSION}.jar
-#      - ${CI_PROJECT_DIR}/.m2/
-#  cache:
-#    paths:
-#      - ${CI_PROJECT_DIR}/.m2/repository # для хранения зависимостей бэкенда
-
-#build-frontend-code-job:
-#  stage: build  
-#  
-#  script:        
-#    - cd frontend
-#    - npm install
-#    - npm run build
-#  artifacts:
-#    paths:
-#      - frontend/dist/frontend
-#  cache:
-#    paths:
-#    - .npm/ # для хранения зависимостей сборки фронтенда
-
-
-
-#upload-backend-release:
-#  stage: release
-  
 #  needs:
-#    - build-backend-code-job
+#    - frontend
+##    - backend
+#    - backend-report
+#  image: vault:1.11.3
+  # если хотим сделать деплой по кнопке
+#   rules:
+#     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+#       when: manual
+#     - if: '$CI_COMMIT_BRANCH == "master"'
+#       when: manual
+#  before_script:
+#    - apk add openssh-client bash
+#    - eval $(ssh-agent -s)
+#    - mkdir -p ~/.ssh
+#    - chmod 700 ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+#    - chmod 600 ~/.ssh/id_rsa
+#    - echo "$SSH_PRIVATE_KEY"
+#    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+#    - chmod 644 ~/.ssh/known_hosts
 #  script:
-#    - cd backend
-#    - mvn -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2/repository -s settings.xml -Dversion.application=${VERSION} -DskipTests deploy
+#    - ssh ${DEV_USER}@${DEV_HOST} "id"
+#    - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=sausage-store jwt=$CI_JOB_JWT)"
+  #  - scp ./backend/sausage-store-backend.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-backend.service
+#    - scp ./backend/deploy.sh ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/deploy.sh
+#    - scp ./docker-compose.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/
+#    - ssh -v ${DEV_USER}@${DEV_HOST} "export "VERSION=${VERSION}";
+#       export "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}";
+#       export "SPRING_DATASOURCE_USERNAME=$(vault kv get -field=spring.datasource.username secret/sausage-store)";
+#       export "SPRING_DATASOURCE_PASSWORD=$(vault kv get -field=spring.datasource.password secret/sausage-store)";
+#       export "SPRING_DATA_MONGODB_URI=$(vault kv get -field=spring.datasource.mongo secret/sausage-store)";
+#       export "DB=${SPRING_DATA_MONGODB_URI}";
+#       export "CI_REGISTRY_USER=${CI_REGISTRY_USER}";
+#       export "CI_REGISTRY_PASSWORD=${CI_REGISTRY_PASSWORD}";
+#       export "CI_REGISTRY=${CI_REGISTRY}";setsid /bin/bash  " /home/student/deploy.sh
 
 
-#upload-frontend-release:
-#  stage: release
-#  
-#  needs:
-#    - build-frontend-code-job
-#  script:
-#    - cd frontend/dist
-#    - tar czvf sausage-store-${VERSION}.tar.gz frontend
-#    - curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}" --upload-file sausage-store-${VERSION}.tar.gz ${NEXUS_REPO_URL_FRONTEND}/sausage-store-front/sausage-store/${VERSION}/sausage-store-${VERSION}.tar.gz
-
-
-  
-#send-report: #задача настройка уведомлений
-#  stage: report #этап report
-# script: #запуск скрипта    
-#    - > #Настройка уведомлений
-#      curl -X POST -H 'Content-type: application/json' --data '{"chat_id": "-1001657575944","text":"Вышла новая версия сосичной - '"${VERSION}#"'\nСкачать Frontend можно по ссылке - <https://nexus.k8s.praktikum-services.tech/repository/sausage-store-anar-amr-frontend//sausage-store-front/#sausage-store/'"${VERSION}"'/sausage-store-'"${VERSION}"'.tar.gz\nСкачать Backend можно по ссылке - <https://nexus.k8s.praktikum-services.tech/#repository/sausage-store-anar-amr-backend2/com/yandex/practicum/devops/sausage-store/'"${VERSION}"'/sausage-store-'"${VERSION}"'.jar"}' https://#api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage

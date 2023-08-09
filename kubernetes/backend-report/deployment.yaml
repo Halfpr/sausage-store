@@ -1,0 +1,67 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-report
+spec:
+  revisionHistoryLimit: 15
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend-report
+  template:
+    metadata:
+      labels:
+        app: backend-report
+    spec:
+      containers:
+        - image: gitlab.praktikum-services.ru:5050/std-015-31/sausage-store/sausage-backend-report:latest
+          name: backend-report
+          imagePullPolicy: IfNotPresent
+          resources:
+           requests:
+             memory: "64Mi"
+             cpu: "100m"
+           limits:
+             memory: "512Mi"
+             cpu: "300m"
+          env:
+            - name: PORT
+              value:  "8080"      
+            - name: SPRING_DATA_MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: postgresmongo
+                  key: mongo_host
+            - name: DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgresmongo
+                  key: mongo_db
+            - name: SPRING_FLYWAY_ENABLED
+              value: "false"
+            - name: spring.cloud.vault.enabled
+              value: "false"
+            - name: SPRING_FLYWAY_BASELINE-ON-MIGRATE
+              value: "true"
+          ports:
+            - name: backend-report
+              containerPort: 8080
+          livenessProbe:
+        # проверка живучести выполнит запрос HTTP GET       
+            httpGet:
+          # путь к запросу в HTTP-запросе          
+              path: /actuator/health
+          # порт, к которому должна подключиться проверка        
+              port: 8080
+        # перед исполнением первой проверки подождать 15 секунд, пока стартанёт бэкенд          
+            initialDelaySeconds: 15
+        # период выполнения проверки
+            periodSeconds: 30
+        # максимальное время выполнения проверки (по умолчанию 1 раз)
+            timeoutSeconds: 2
+        # сколько раз пробовать попытку, если она провалилась (по умолчанию 1 раз)
+            failureThreshold: 6
+  # чтобы Кубер мог скачивать образы из нашего GitLab Registry  
+      imagePullSecrets:
+        - name: docker-config-secret

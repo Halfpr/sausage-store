@@ -1,0 +1,20 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+data:
+  sausage-store.conf: |
+    server {
+      listen {{ .Values.port | int }};
+
+      location / {
+        root   /usr/share/nginx/html;
+        index  index.html;
+        try_files $uri $uri/ /index.html;
+      }
+
+      location /api {
+          proxy_pass http://backend:{{ .Values.global.backendPort | int }};
+      }
+    }
