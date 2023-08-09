@@ -1,4 +1,9 @@
 secrets:
+  postgresHost: "jdbc:postgresql://rc1b-x9g34dxygn60eu1y.mdb.yandexcloud.net:6432/std-015-31"
+  postgresUser: "std-015-31"
+  postgresPassword: "Testusr1234"
+  mongoHost: "mongodb://std-015-31:Testusr1234@rc1c-wqwzfolame1vyonu.mdb.yandexcloud.net:27018/std-015-31?tls=true"
+  mongoDB: "mongodb://std-015-31:Testusr1234@rc1c-wqwzfolame1vyonu.mdb.yandexcloud.net:27018/std-015-31?tls=true"
   dockerConfigJson: "ewoJImF1dGhzIjogewoJCSJnaXRsYWIucHJha3Rpa3VtLXNlcnZpY2VzLnJ1OjUwNTAiOiB7CgkJCSJhdXRoIjogImMzUmtMVEF4TlMwek1UcFdNMFZ3TjJJeU9RPT0iCgkJfQoJfQp9"
 
 global:
