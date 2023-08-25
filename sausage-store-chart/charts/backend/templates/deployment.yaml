@@ -23,7 +23,7 @@ spec:
       containers:
         - image: {{ .Values.global.imageRegistry }}/{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}
           name: {{ .Values.name }}
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           env:
             - name: SPRING_DATASOURCE_URL
               valueFrom:
