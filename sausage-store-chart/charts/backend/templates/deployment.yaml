@@ -17,6 +17,10 @@ spec:
       app: {{ .Values.name }}
   template:
     metadata:
+      annotations:
+        prometheus.io/path: /actuator/prometheus
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
       labels:
         app: {{ .Values.name }}
     spec:
