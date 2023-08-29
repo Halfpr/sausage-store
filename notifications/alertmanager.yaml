@@ -1,0 +1,21 @@
+global:
+      resolve_timeout: 1m
+    route:
+       group_wait: 10s
+       group_interval: 30s
+       repeat_interval: 30m
+       receiver: "telegram"
+       routes:
+         - receiver: "telegram"
+           group_wait: 10s
+           match_re:
+             severity: critical|warning
+           continue: true
+    receivers:
+     - name: "telegram"
+       telegram_configs:
+         - send_resolved: true
+           api_url: https://api.telegram.org
+           bot_token: 5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs
+           chat_id: -1001657575944
+           message: "{{ range .Alerts }}{{ .Annotations.description }}\n{{ end }}"
