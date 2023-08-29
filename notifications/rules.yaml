@@ -22,7 +22,7 @@ groups:
         project: "sausage_store"
         component: "Backend"
     - alert: error CODE (3xx,4xx,5xx)
-      expr: rate(http_server_requests_seconds_count{uri="/actuator/prometheus", status!~"2.."}[1m]) > 0
+      expr: rate(http_server_requests_seconds_count{uri="/actuator/prometheus", status!~"2.."}[2m]) > 0
       labels:
         severity: critical
         project: "sausage_store"
